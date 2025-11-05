@@ -1,18 +1,8 @@
+<!-- eslint-disable vue/block-lang -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
-<script setup lang="ts">
-import { TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { type Client } from '@/types';
+<script setup>
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-
-interface Props {
-    clients: {
-        data: Client[];
-        total: number;
-        links: { label: string; url: string | null; active: boolean }[];
-    };
-    categories: { id: number; name: string }[];
-}
 
 const props = defineProps({
     clients: Object,
@@ -23,6 +13,31 @@ const search = ref('');
 const category = ref('');
 const priority = ref('');
 const connected = ref('');
+
+const applyFilters = () => {
+    router.get(
+        '/clients',
+        {
+            search: search.value,
+            category: category.value,
+            priority: priority.value,
+            connected: connected.value,
+        },
+        {
+            preserveState: true,
+        },
+    );
+};
+
+const openLinkedIn = (client) => {
+    window.open(`https://www.linkedin.com/in/${client.linkedin}`, '_blank');
+};
+
+const deleteClient = (clientId) => {
+    router.delete(`/clients/${clientId}`, {
+        preserveState: true,
+    });
+};
 </script>
 
 <template>
@@ -109,11 +124,7 @@ const connected = ref('');
                     <td class="p-2">
                         <a href="#" class="mr-2 text-blue-500">Edit</a>
                         <button
-                            @click="
-                                router.delete(
-                                    route('clients.destroy', client.id),
-                                )
-                            "
+                            @click="deleteClient(client.id)"
                             class="text-red-500"
                         >
                             Delete
@@ -139,11 +150,4 @@ const connected = ref('');
             </div>
         </div>
     </div>
-    <TableBody>
-        <TableRow v-for="client in clients" :key="client.id">
-            <TableCell>{{ client.name }}</TableCell>
-
-            <TableCell class="text-right">Button to edit/delete</TableCell>
-        </TableRow>
-    </TableBody>
 </template>
