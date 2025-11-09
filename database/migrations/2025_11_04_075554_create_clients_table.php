@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('linkedin_url');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->enum('priority', ['high', 'medium', 'low'])->default('medium');
             $table->enum('activity', ['active', 'moderate', 'inactive'])->default('moderate');

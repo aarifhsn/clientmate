@@ -13,7 +13,8 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Client::with('category');
+        $query = Client::with('category')
+            ->where('user_id', auth()->id());
 
         // Search
         if ($request->search) {
@@ -38,6 +39,13 @@ class ClientController extends Controller
 
         if ($request->has('favorite') && $request->boolean('favorite')) {
             $query->where('is_favorite', true);
+        }
+        if ($request->has('last_visited') && $request->last_visited !== null) {
+            if ($request->boolean('last_visited')) {
+                $query->whereNotNull('last_visited_at');
+            } else {
+                $query->whereNull('last_visited_at');
+            }
         }
 
         // Engagement filter
@@ -65,8 +73,8 @@ class ClientController extends Controller
         }
 
         // Sorting (default: oldest visits first)
-        $sortBy = $request->sort_by ?? 'last_visited_at';
-        $sortOrder = $request->sort_order ?? 'asc';
+        $sortBy = $request->sort_by ?? 'created_at';
+        $sortOrder = $request->sort_order ?? 'desc';
 
         if ($sortBy === 'last_visited_at') {
             // Nulls first (never visited)
@@ -98,7 +106,7 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
             'linkedin_url' => 'required|url',
             'category_id' => 'nullable|exists:categories,id',
             'priority' => 'required|in:high,medium,low',
@@ -107,6 +115,8 @@ class ClientController extends Controller
             'next_follow_up' => 'nullable|date',
             'notes' => 'nullable|string'
         ]);
+
+        $validated['user_id'] = auth()->id();
 
         Client::create($validated);
 
@@ -146,6 +156,8 @@ class ClientController extends Controller
             'notes' => 'nullable|string'
         ]);
 
+        $validated['user_id'] = auth()->id();
+
         $client->update($validated);
 
         return redirect()->back()
@@ -171,6 +183,16 @@ class ClientController extends Controller
         return redirect()->back()
             ->with('success', 'Visit recorded successfully!');
     }
+
+    public function updateLastVisited(Client $client)
+    {
+        $client->update([
+            'last_visited_at' => now(),
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
 
     public function toggleFavorite(Client $client)
     {

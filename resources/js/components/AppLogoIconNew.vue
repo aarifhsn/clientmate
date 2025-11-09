@@ -1,0 +1,125 @@
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue';
+
+defineOptions({
+    inheritAttrs: false,
+});
+
+interface Props {
+    className?: HTMLAttributes['class'];
+}
+
+defineProps<Props>();
+</script>
+
+<template>
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background Gradient -->
+        <defs>
+            <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop
+                    offset="0%"
+                    style="stop-color: #14b8a6; stop-opacity: 1"
+                />
+                <stop
+                    offset="100%"
+                    style="stop-color: #0891b2; stop-opacity: 1"
+                />
+            </linearGradient>
+
+            <linearGradient
+                id="bookmarkGradient"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+            >
+                <stop
+                    offset="0%"
+                    style="stop-color: #ffffff; stop-opacity: 1"
+                />
+                <stop
+                    offset="100%"
+                    style="stop-color: #e0f2fe; stop-opacity: 1"
+                />
+            </linearGradient>
+
+            <!-- Shadow -->
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow
+                    dx="0"
+                    dy="4"
+                    stdDeviation="8"
+                    flood-opacity="0.3"
+                />
+            </filter>
+        </defs>
+
+        <!-- Rounded Square Background -->
+        <rect
+            x="10"
+            y="10"
+            width="180"
+            height="180"
+            rx="40"
+            fill="url(#bgGradient)"
+            filter="url(#shadow)"
+        />
+
+        <!-- LinkedIn "in" inspired element (stylized) -->
+        <g transform="translate(100, 80)">
+            <!-- Left bar (i) -->
+            <rect
+                x="-45"
+                y="-15"
+                width="14"
+                height="14"
+                rx="7"
+                fill="#ffffff"
+                opacity="0.9"
+            />
+            <rect
+                x="-45"
+                y="5"
+                width="14"
+                height="40"
+                rx="3"
+                fill="#ffffff"
+                opacity="0.9"
+            />
+
+            <!-- Right shape (n) -->
+            <path
+                d="M -20 5 L -20 45 L -8 45 L -8 28 Q -8 18 2 18 Q 12 18 12 28 L 12 45 L 24 45 L 24 25 Q 24 5 2 5 Q -8 5 -12 12 L -12 5 Z"
+                fill="#ffffff"
+                opacity="0.9"
+            />
+        </g>
+
+        <!-- Bookmark Icon (bottom right) -->
+        <g transform="translate(130, 120)">
+            <path
+                d="M 0 0 L 30 0 L 30 50 L 15 40 L 0 50 Z"
+                fill="url(#bookmarkGradient)"
+                stroke="#0891b2"
+                stroke-width="2.5"
+                filter="url(#shadow)"
+            />
+
+            <!-- Checkmark inside bookmark -->
+            <path
+                d="M 9 18 L 13 24 L 22 12"
+                fill="none"
+                stroke="#14b8a6"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+        </g>
+
+        <!-- Small accent dots for design -->
+        <circle cx="40" cy="160" r="4" fill="#ffffff" opacity="0.3" />
+        <circle cx="55" cy="165" r="3" fill="#ffffff" opacity="0.3" />
+        <circle cx="160" cy="40" r="5" fill="#ffffff" opacity="0.2" />
+    </svg>
+</template>

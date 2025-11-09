@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Category;
+use App\Models\Client;
 use Illuminate\Http\RedirectResponse;
 
 class CategoryController extends Controller
@@ -13,9 +14,11 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::withCount('clients')->get();
+        $clients = Client::with('category')->get();
 
         return Inertia::render('Categories/Index', [
             'categories' => $categories,
+            'clients' => $clients
         ]);
     }
 
@@ -24,12 +27,26 @@ class CategoryController extends Controller
         return Inertia::render('Categories/Create');
     }
 
+    public function show(Category $category)
+    {
+        // Load all clients for this category
+        $category->load('clients');
+
+        return Inertia::render('Categories/Show', [
+            'category' => $category,
+            'clients' => $category->clients,
+        ]);
+    }
+
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'color' => 'required|string|max:7'
         ]);
+
+        $validated['user_id'] = auth()->id();
 
         Category::create($validated);
 
@@ -51,6 +68,8 @@ class CategoryController extends Controller
             'color' => 'string|max:7'
         ]);
 
+        $validated['user_id'] = auth()->id();
+
         $category->update($validated);
 
         return redirect()->back()
@@ -63,4 +82,6 @@ class CategoryController extends Controller
         return redirect()->back()
             ->with('success', 'Category deleted successfully!');
     }
+
+
 }

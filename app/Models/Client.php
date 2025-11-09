@@ -15,6 +15,7 @@ class Client extends Model
     protected $fillable = [
 
         'name',
+        'user_id',
         'linkedin_url',
         'category_id',
         'priority',
@@ -34,6 +35,11 @@ class Client extends Model
     ];
 
     protected $appends = ['engagement_status', 'days_since_visit', 'is_overdue'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function category()
     {

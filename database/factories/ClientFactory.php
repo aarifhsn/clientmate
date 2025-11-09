@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ClientFactory extends Factory
@@ -11,6 +13,8 @@ class ClientFactory extends Factory
         $priorities = ['high', 'medium', 'low'];
 
         return [
+            'user_id' => User::factory(),
+            'category_id' => Category::inRandomOrder()->first()?->id,
             'name' => $this->faker->name(),
             'linkedin_url' => 'https://www.linkedin.com/in/' . $this->faker->userName(),
             'priority' => $this->faker->randomElement($priorities),
@@ -21,5 +25,6 @@ class ClientFactory extends Factory
             'next_follow_up' => $this->faker->optional()->dateTimeBetween('now', '+10 days'),
             'notes' => $this->faker->sentence(),
         ];
+
     }
 }
